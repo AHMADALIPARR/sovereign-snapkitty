@@ -1,0 +1,67 @@
+// Harness data model, in Protobuf Editions (edition 2024).
+//
+// This is the storage schema for the dspy-dotprompt harness. It replaces
+// SQL: instead of tables, the harness writes length-delimited binary
+// records to files (datasets.bin, runs.bin, events.bin) and queries them
+// by reading and filtering. The wire format is standard Protobuf, so the
+// files stay readable by any Protobuf implementation.
+//
+// Editions notes (see https://protobuf.dev/editions/overview/):
+// - `edition = "2024"` replaces `syntax = "proto2"` / `syntax = "proto3"`.
+// - Field presence is EXPLICIT by default in edition 2024, so an `error`
+//   string that is absent is distinct from one that is empty.
+// - `reserved` names are unquoted in editions.
+// - No `required` label; required-ness is enforced by the store code.
+edition = "2024";
+
+package dspy_dotprompt;
+
+// One evaluation example: inputs in, expected outputs out.
+message Example {
+  string id = 1;
+  map<string, string> inputs = 2;
+  map<string, string> expected = 3;
+}
+
+// A named collection of examples, for evaluating a program.
+message Dataset {
+  string name = 1;
+  repeated Example examples = 2;
+}
+
+// The result of running one example through a program.
+message RunResult {
+  string example_id = 1;
+  map<string, string> inputs = 2;
+  map<string, string> prediction = 3;
+  double score = 4;
+  bool passed = 5;
+  double latency_ms = 6;
+  // Set only when the example failed with an error.
+  string error = 7;
+}
+
+// One full harness evaluation run over a dataset.
+message RunRecord {
+  string run_id = 1;
+  string program_name = 2;
+  string dataset_name = 3;
+  int64 started_unix_ms = 4;
+  repeated RunResult results = 5;
+  int32 pass_count = 6;
+  int32 total = 7;
+  double pass_rate = 8;
+  double mean_latency_ms = 9;
+}
+
+// One hook firing, for audit. Written by the hook log, not by SQL.
+message HookEvent {
+  string event_id = 1;
+  string run_id = 2;
+  string program_name = 3;
+  string hook = 4;
+  // One of: before_prompt, after_prompt, on_error.
+  string kind = 5;
+  int64 timestamp_unix_ms = 6;
+  string detail = 7;
+}

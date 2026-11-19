@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dspy-dotprompt"
+version = "0.1.0"
+description = "Custom DSPy-style DSL + harness on Google dotprompt, with pre-registered prompt hooks, a Protobuf Editions store, a zx task runner, and an air-gapped LevelDB key store."
+requires-python = ">=3.11"
+dependencies = [
+    "dotpromptz>=0.4",
+    "protobuf>=5.26",
+    "cryptography>=42",
+]
+
+[project.optional-dependencies]
+dev = ["grpcio-tools>=1.62"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+dspy_dotprompt = ["py.typed"]

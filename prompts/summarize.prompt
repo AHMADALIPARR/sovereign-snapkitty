@@ -1,0 +1,16 @@
+---
+model: test/model
+input:
+  schema:
+    text: string
+output:
+  format: text
+  schema:
+    summary: string, a one-sentence summary of the text
+---
+{{role "system"}}
+You are a helpful assistant. Summarize the given text in one sentence.
+
+{{role "user"}}
+Summarize this text in one sentence:
+{{text}}

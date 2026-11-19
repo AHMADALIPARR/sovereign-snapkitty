@@ -1,0 +1,15 @@
+---
+model: test/model
+input:
+  schema:
+    question: string
+output:
+  format: text
+  schema:
+    answer: string, the answer to the question
+---
+{{role "system"}}
+You are a helpful assistant. Answer the question briefly and exactly.
+
+{{role "user"}}
+Answer this question: {{question}}
